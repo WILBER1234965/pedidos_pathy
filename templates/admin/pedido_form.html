@@ -1,83 +1,144 @@
 {% extends 'admin/base.html' %}
 {% block title %}{% if editar %}Editar Pedido{% else %}Nuevo Pedido{% endif %}{% endblock %}
 
+{% block head_extra %}
+  <!-- Si necesitas estilos extra específicos al formulario, puedes incluirlos aquí -->
+{% endblock %}
+
 {% block content %}
-<h1>{% if editar %}Editar Pedido{% else %}Nuevo Pedido{% endif %}</h1>
+<h1 class="h4 mb-4">{% if editar %}Editar Pedido{% else %}Nuevo Pedido{% endif %}</h1>
 
 <form method="POST" id="formPedido">
   {{ form.hidden_tag() }}
 
-  <div class="row mb-3">
-    <div class="col-md-8">
-      <label for="autocompleteCliente" class="form-label">Buscar cliente</label>
-      <input type="text" class="form-control" id="autocompleteCliente" placeholder="Ingrese nombre de cliente">
-      <input type="hidden" name="cliente_id" id="cliente_id" value="{% if editar %}{{ pedido.cliente_id }}{% endif %}">
-      <button type="button" class="btn btn-link mt-1" data-bs-toggle="modal" data-bs-target="#clienteModal" onclick="abrirModalCliente('{{ url_for('cliente_nuevo') }}', 'Nuevo Cliente')">+ Nuevo Cliente</button>
-      <div id="infoClienteSeleccionado" class="mt-2">
-        {% if editar %}
-          <strong>Cliente actual:</strong> {{ pedido.cliente.nombre_completo }}
-        {% endif %}
+  <!-- 1. Cliente (autocomplete + botón “Nuevo Cliente”) -->
+  <div class="mb-3">
+    <label class="form-label">Cliente</label>
+    <div class="input-group">
+      <input
+        type="text"
+        class="form-control"
+        id="autocompleteCliente"
+        placeholder="Buscar nombre..."
+        aria-label="Buscar cliente"
+      >
+      <button
+        class="btn btn-outline-secondary"
+        type="button"
+        data-bs-toggle="modal"
+        data-bs-target="#clienteModal"
+        onclick="abrirModalCliente('{{ url_for('cliente_nuevo') }}','Nuevo Cliente')"
+        title="Agregar nuevo cliente"
+      >
+        <i class="bi bi-person-plus"></i>
+      </button>
+    </div>
+    <input
+      type="hidden"
+      name="cliente_id"
+      id="cliente_id"
+      value="{% if editar %}{{ pedido.cliente_id }}{% endif %}"
+    >
+    <small id="infoClienteSeleccionado" class="form-text text-muted mt-1">
+      {% if editar %}
+        Cliente actual: <strong>{{ pedido.cliente.nombre_completo }}</strong>
+      {% endif %}
+    </small>
+  </div>
+
+  <!-- 2. Tipo de prenda (select) -->
+  <div class="mb-3">
+    <label for="tipo_prenda" class="form-label">{{ form.tipo_prenda.label.text }}</label>
+    {{ form.tipo_prenda(class="form-select", id="tipo_prenda") }}
+  </div>
+
+  <!-- 3. Bloque dinámico de medidas dentro de un accordion -->
+  <div class="accordion mb-3" id="accordionMedidas">
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingMedidas">
+        <button
+          class="accordion-button collapsed"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#collapseMedidas"
+          aria-expanded="false"
+          aria-controls="collapseMedidas"
+        >
+          Medidas de la prenda
+        </button>
+      </h2>
+      <div
+        id="collapseMedidas"
+        class="accordion-collapse collapse"
+        aria-labelledby="headingMedidas"
+        data-bs-parent="#accordionMedidas"
+      >
+        <div class="accordion-body" id="bloque_medidas">
+          <!-- El JS (pedido_form.js) inyectará aquí los campos correspondientes a cada tipo de prenda -->
+        </div>
       </div>
     </div>
   </div>
 
-  <div class="row mb-3">
-    <div class="col-md-4">
-      {{ form.tipo_prenda.label(class="form-label") }}
-      {{ form.tipo_prenda(class="form-select", id="tipo_prenda") }}
+  <!-- 4. Fecha de entrega / Adelanto / Total -->
+  <div class="row g-3 mb-4">
+    <div class="col-12 col-sm-6 col-md-4">
+      <div class="form-floating">
+        {{ form.fecha_entrega(class="form-control", id="fecha_entrega") }}
+        <label for="fecha_entrega">{{ form.fecha_entrega.label.text }}</label>
+      </div>
+    </div>
+    <div class="col-6 col-md-4">
+      <div class="form-floating">
+        {{ form.adelanto(class="form-control", step="0.01", id="adelanto") }}
+        <label for="adelanto">{{ form.adelanto.label.text }}</label>
+      </div>
+    </div>
+    <div class="col-6 col-md-4">
+      <div class="form-floating">
+        {{ form.total(class="form-control", step="0.01", id="total") }}
+        <label for="total">{{ form.total.label.text }}</label>
+      </div>
     </div>
   </div>
 
-  <!-- Bloque dinámico de medidas -->
-  <div id="bloque_medidas">
-  </div>
-
-  <div class="row mb-3">
-    <div class="col-md-4">
-      {{ form.fecha_entrega.label(class="form-label") }}
-      {{ form.fecha_entrega(class="form-control", id="fecha_entrega") }}
-    </div>
-    <div class="col-md-4">
-      {{ form.adelanto.label(class="form-label") }}
-      {{ form.adelanto(class="form-control", step="0.01") }}
-    </div>
-    <div class="col-md-4">
-      {{ form.total.label(class="form-label") }}
-      {{ form.total(class="form-control", step="0.01") }}
-    </div>
-  </div>
-
-  <div class="text-end">
-    <a href="{{ url_for('pedidos_list') }}" class="btn btn-secondary me-2">Cancelar</a>
-    {{ form.submit(class="btn btn-primary") }}
+  <!-- 5. Botones -->
+  <div class="d-flex justify-content-end gap-2">
+    <a href="{{ url_for('pedidos_list') }}" class="btn btn-secondary px-4">Cancelar</a>
+    {{ form.submit(class="btn btn-primary px-4") }}
   </div>
 </form>
 
+<!-- Modal para Nuevo/Editar Cliente -->
 <div class="modal fade" id="clienteModal" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
+  <div class="modal-dialog modal-dialog-centered modal-sm">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="clienteModalTitle"></h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
       </div>
-      <div class="modal-body" id="clienteModalBody"></div>
+      <div class="modal-body" id="clienteModalBody">
+        <!-- El formulario de cliente se cargará aquí vía AJAX -->
+      </div>
     </div>
   </div>
 </div>
-
 {% endblock %}
 
 {% block scripts_extra %}
-<script>
-  const EDITANDO = {{ 'true' if editar else 'false' }};
-  {% if editar %}
-    const PEDIDO_ID = {{ pedido.id }};
-    const CLIENTE_ID_ACTUAL = {{ pedido.cliente_id }};
-    const TIPO_PRENDA_ACTUAL = "{{ pedido.tipo_prenda }}";
-  {% else %}
-    const PEDIDO_ID = null;
-    const CLIENTE_ID_ACTUAL = null;
-    const TIPO_PRENDA_ACTUAL = null;
-  {% endif %}
-</script>
+  <script>
+    const EDITANDO = {{ 'true' if editar else 'false' }};
+    {% if editar %}
+      const PEDIDO_ID = {{ pedido.id }};
+      const CLIENTE_ID_ACTUAL = {{ pedido.cliente_id }};
+      const TIPO_PRENDA_ACTUAL = "{{ pedido.tipo_prenda }}";
+    {% else %}
+      const PEDIDO_ID = null;
+      const CLIENTE_ID_ACTUAL = null;
+      const TIPO_PRENDA_ACTUAL = null;
+    {% endif %}
+  </script>
+
+  <!-- Enlazamos el JS externo que contiene toda la lógica -->
+  <script src="{{ url_for('static', filename='js/pedido_form.js') }}"></script>
 {% endblock %}

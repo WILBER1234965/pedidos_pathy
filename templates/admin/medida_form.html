@@ -1,56 +1,61 @@
-<form method="POST" action="{{ action_url }}">
+<form method="POST" action="{{ action_url }}" id="formMedida">
   {{ form.hidden_tag() }}
+
+  <!-- 1. Tipo de prenda -->
   <div class="mb-3">
-    {{ form.tipo_prenda.label(class="form-label") }}
+    <label for="tipo_prenda_medida" class="form-label">{{ form.tipo_prenda.label.text }}</label>
     {{ form.tipo_prenda(class="form-select", id="tipo_prenda_medida") }}
   </div>
 
-  <div id="bloque_medida_cliente">
-    <!-- Se cargará dinámicamente con JS -->
+  <!-- 2. Bloque dinámico de campos de medida (dentro de un accordion) -->
+  <div class="accordion mb-3" id="accordionMedidaForm">
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingBloquesMedida">
+        <button
+          class="accordion-button collapsed"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#collapseBloquesMedida"
+          aria-expanded="false"
+          aria-controls="collapseBloquesMedida"
+        >
+          Completar Medidas
+        </button>
+      </h2>
+      <div
+        id="collapseBloquesMedida"
+        class="accordion-collapse collapse"
+        aria-labelledby="headingBloquesMedida"
+        data-bs-parent="#accordionMedidaForm"
+      >
+        <div class="accordion-body" id="bloque_medida_cliente">
+          <!-- Aquí el JS (medida_form.js) inyectará los inputs según el tipo_prenda -->
+        </div>
+      </div>
+    </div>
   </div>
 
-  <div class="text-end mt-3">
-    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-    {{ form.submit(class="btn btn-primary") }}
+  <!-- 3. Botones dentro del modal -->
+  <div class="d-flex justify-content-end gap-2">
+    <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">Cancelar</button>
+    {{ form.submit(class="btn btn-primary px-4") }}
   </div>
 </form>
-<script>
-  const EDICION_MEDIDA = {{ 'true' if editar else 'false' }};
-  {% if editar %}
-    const MEDIDA_ID = {{ medida.id }};
-    const TIPO_PRENDA_MED = "{{ medida.tipo_prenda }}";
-    const CLIENTE_ID = {{ medida.cliente_id }};
-  {% else %}
-    const MEDIDA_ID = null;
-    const TIPO_PRENDA_MED = null;
-    const CLIENTE_ID = {{ cliente_id or 'null' }};
-  {% endif %}
 
-  $(document).ready(function() {
-    generarBloquesMedida();
+{% block scripts_extra %}
+  <script>
+    const EDICION_MEDIDA = {{ 'true' if editar else 'false' }};
+    {% if editar %}
+      const MEDIDA_ID = {{ medida.id }};
+      const TIPO_PRENDA_MED = "{{ medida.tipo_prenda }}";
+      const CLIENTE_ID = {{ medida.cliente_id }};
+    {% else %}
+      const MEDIDA_ID = null;
+      const TIPO_PRENDA_MED = null;
+      const CLIENTE_ID = {{ cliente_id or 'null' }};
+    {% endif %}
+  </script>
 
-    if (EDICION_MEDIDA && TIPO_PRENDA_MED) {
-      $('#tipo_prenda_medida').val(TIPO_PRENDA_MED).trigger('change');
-      $.ajax({
-        url: `/admin/medidas/${MEDIDA_ID}/json`,
-        method: 'GET',
-        success: function(res) {
-          const datos = res.medida;
-          Object.keys(datos).forEach(function(campo) {
-            if ($('#' + campo).length) {
-              $('#' + campo).val(datos[campo]);
-            }
-          });
-        }
-      });
-    }
-
-    $('#tipo_prenda_medida').on('change', function() {
-      let seleccionado = $(this).val();
-      $('.bloque-prenda').removeClass('activo');
-      if (seleccionado) {
-        $(`#bloque_${seleccionado}`).addClass('activo');
-      }
-    });
-  });
-</script>
+  <!-- JS específico para manejar el formulario de Medida -->
+  <script src="{{ url_for('static', filename='js/medida_form.js') }}"></script>
+{% endblock %}
