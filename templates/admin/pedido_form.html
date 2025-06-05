@@ -2,17 +2,23 @@
 {% extends 'admin/base.html' %}
 {% block title %}{% if pedido %}Editar Pedido{% else %}Nuevo Pedido{% endif %}{% endblock %}
 
-{% block content %}
-<h1 class="mt-4">{% if pedido %}Editar Pedido{% else %}Nuevo Pedido{% endif %}</h1>
+{% block head_extra %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/pedido_form.css') }}">
+{% endblock %}
 
-<form method="POST" id="formPedidoMulti" novalidate>
-{{ form.hidden_tag() }}
+
+{% block content %}
+<div class="card shadow-sm">
+  <div class="card-body">
+    <h1 class="card-title fs-4 mb-4">{% if pedido %}Editar Pedido{% else %}Nuevo Pedido{% endif %}</h1>
+    <form method="POST" id="formPedidoMulti" novalidate>
+    {{ form.hidden_tag() }}
 
 
   {# ———————————————— #}
   {# 1. SELECTOR TIPO DE PRENDA (ANTES QUE CLIENTE) #}
   {# ———————————————— #}
-  <div class="mb-3">
+  <div class="mb-3 position-relative">
     <label for="selectTipoPrenda_0" class="form-label">Tipo de prenda</label>
     <select class="form-select tipo-prenda" id="selectTipoPrenda_0" name="prenda[0][tipo_prenda]" required>
       <option value="" selected disabled>-- Selecciona una prenda --</option>
@@ -25,7 +31,7 @@
   {# ———————————————— #}
   {# 2. BÚSQUEDA DE CLIENTE (COMÚN A TODAS LAS PRENDAS) #}
   {# ———————————————— #}
-  <div class="mb-3">
+  <div class="mb-3 position-relative">
     <label for="autocompleteCliente" class="form-label">Buscar cliente</label>
     <input type="text" class="form-control" id="autocompleteCliente" placeholder="Ingrese nombre de cliente...">
     <input type="hidden" id="clienteIdHidden" name="cliente_id" value="{% if pedido %}{{ pedido.cliente.id }}{% endif %}">
@@ -90,7 +96,8 @@
 
   </div>
 </form>
-
+</div><!-- card-body -->
+</div>
 {# ———————————————— #}
 {# MODAL PARA CREAR NUEVO CLIENTE #}
 {# ———————————————— #}
@@ -128,6 +135,6 @@
 
 {% endblock %}
 
-{% block scripts %}
+{% block scripts_extra %}
   <script src="{{ url_for('static', filename='js/pedido_multi_form.js') }}"></script>
 {% endblock %}
