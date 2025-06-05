@@ -289,3 +289,20 @@ main.container-fluid {
   outline: 2px solid rgba(13, 110, 253, 0.25);
   outline-offset: 2px;
 }
+
+/* -------------------------------------------------------------
+   12) Dashboard cards
+   ------------------------------------------------------------- */
+.dashboard-card .card-title {
+  font-size: 0.9rem;
+}
+
+.dashboard-card .card-text {
+  font-weight: 600;
+}
+
+@media (max-width: 768px) {
+  .dashboard-card .card-text {
+    font-size: 1.25rem;
+  }
+}

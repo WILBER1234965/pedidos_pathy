@@ -4,41 +4,45 @@
 {% block content %}
 <h1 class="mb-4">Dashboard</h1>
 
-<div class="row">
-  <div class="col-md-3">
-    <div class="card text-white bg-primary mb-3">
-      <div class="card-body">
-        <h5 class="card-title">Pedidos últimos 30 días</h5>
-        <p class="card-text display-6">{{ total_30 }}</p>
+<div class="row g-3">
+  <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
+    <div class="card text-white bg-primary dashboard-card h-100">
+      <div class="card-body text-center">
+        <i class="fa-solid fa-cart-shopping fa-2x mb-2"></i>
+        <h6 class="card-title">Pedidos últimos 30 días</h6>
+        <p class="card-text fs-3 mb-0">{{ total_30 }}</p>
       </div>
     </div>
   </div>
-  <div class="col-md-3">
-    <div class="card text-white bg-success mb-3">
-      <div class="card-body">
-        <h5 class="card-title">Clientes nuevos (última semana)</h5>
-        <p class="card-text display-6">{{ clientes_semana }}</p>
+  <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
+    <div class="card text-white bg-success dashboard-card h-100">
+      <div class="card-body text-center">
+        <i class="fa-solid fa-users fa-2x mb-2"></i>
+        <h6 class="card-title">Clientes nuevos (última semana)</h6>
+        <p class="card-text fs-3 mb-0">{{ clientes_semana }}</p>
       </div>
     </div>
   </div>
-  <div class="col-md-3">
-    <div class="card text-white bg-warning mb-3">
-      <div class="card-body">
-        <h5 class="card-title">Pendientes hoy</h5>
-        <p class="card-text display-6">{{ pendientes_hoy|length }}</p>
+  <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
+    <div class="card text-dark bg-warning dashboard-card h-100">
+      <div class="card-body text-center">
+        <i class="fa-solid fa-clock fa-2x mb-2"></i>
+        <h6 class="card-title">Pendientes hoy</h6>
+        <p class="card-text fs-3 mb-0">{{ pendientes_hoy|length }}</p>
       </div>
     </div>
   </div>
 </div>
 
-<div class="row">
-  <div class="col-md-6">
+<div class="row mt-4 g-4">
+  <div class="col-12 col-md-6">
     <h4>Pedidos por estado</h4>
     <canvas id="graficoEstados"></canvas>
   </div>
-  <div class="col-md-6">
+  <div class="col-12 col-md-6">
     <h4>Últimos 5 pedidos</h4>
-    <table class="table table-striped">
+    <div class="table-responsive">
+    <table class="table table-striped align-middle">
       <thead>
         <tr>
           <th>#Orden</th>
@@ -60,6 +64,7 @@
         {% endfor %}
       </tbody>
     </table>
+    </div>
   </div>
 </div>
 {% endblock %}

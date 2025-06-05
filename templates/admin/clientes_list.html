@@ -7,7 +7,8 @@
   <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#clienteModal" onclick="abrirModalCliente('{{ url_for('cliente_nuevo') }}', 'Nuevo Cliente')">+ Nuevo Cliente</button>
 </div>
 
-<table class="table table-hover">
+<div class="table-responsive">
+<table class="table table-hover align-middle">
   <thead>
     <tr>
       <th>Nombre completo</th>
@@ -30,6 +31,7 @@
     {% endfor %}
   </tbody>
 </table>
+</div>
 
 <div class="modal fade" id="clienteModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">

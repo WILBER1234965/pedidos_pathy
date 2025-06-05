@@ -1,0 +1,163 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+body, html {
+  height: 100%;
+  width: 100%;
+  font-family: 'Poppins', sans-serif;
+  overflow-x: hidden;
+  margin: 0;
+  padding: 0;
+}
+
+/* =========================
+   1) BOTÓN TOGGLE (Fijo, esquina superior izquierda)
+   ========================= */
+.toggle-btn {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  z-index: 1200;
+  width: 42px;
+  height: 42px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* =========================
+   2) SIDEBAR DESPLEGABLE
+   ========================= */
+#sidebar {
+  background: linear-gradient(135deg, #23a6d5 0%, #23d5ab 100%);
+  color: #fff;
+  width: 250px;
+  min-width: 250px;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  transition: transform 0.3s ease;
+  z-index: 1100;
+}
+
+/* Cuando esté oculto, lo desplazamos completamente a la izquierda */
+.sidebar-hidden {
+  transform: translateX(-100%);
+}
+
+/* Cuando esté abierto, lo dejamos en su posición normal */
+.sidebar-open {
+  transform: translateX(0);
+}
+
+#sidebar .sidebar-header {
+  background: rgba(255, 255, 255, 0.05);
+  padding-bottom: 1rem;
+}
+
+#sidebar .sidebar-logo {
+  font-size: 1.5rem;
+  color: #fff;
+}
+
+#sidebar .sidebar-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #fff;
+}
+
+#sidebar .nav-link {
+  color: #e0f7fa;
+  margin: 0.4rem 0;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  transition: background 0.2s, padding-left 0.2s;
+}
+
+#sidebar .nav-link:hover,
+#sidebar .nav-link.active {
+  background: rgba(255, 255, 255, 0.15);
+  padding-left: 1.5rem;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+#sidebar .logout-section {
+  margin-top: auto;
+  padding-bottom: 1rem;
+}
+
+#sidebar a {
+  text-decoration: none;
+}
+
+/* =========================
+   3) BARRA SUPERIOR FIJA
+   ========================= */
+header.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  z-index: 1000;
+}
+
+/* Icono de perfil */
+.profile-img {
+  width: 35px;
+  height: 35px;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+/* =========================
+   4) CONTENIDO PRINCIPAL
+   ========================= */
+.main-content {
+  margin-top: 60px;       /* dejar espacio para la barra superior */
+  margin-left: 0;         /* inicialmente, sidebar está oculto */
+  transition: margin 0.3s ease;
+  padding: 1.5rem;
+}
+
+/* Si el sidebar está abierto en desktop (>768px), ajustamos margen */
+.sidebar-open ~ .main-content {
+  margin-left: 250px;
+}
+
+/* =========================
+   5) RESPONSIVE
+   ========================= */
+@media (max-width: 767.98px) {
+  /* El main-content no añade margen lateral en móviles */
+  .main-content {
+    margin-left: 0;
+  }
+}
+
+/* =========================
+   6) ANIMACIONES GENERALES
+   ========================= */
+/* Fade-in del contenido */
+.main-content .container-fluid {
+  opacity: 0;
+  animation: fadeInContent 0.8s ease-in-out forwards;
+}
+
+@keyframes fadeInContent {
+  to { opacity: 1; }
+}
+
+/* Microinteracción en botones */
+.btn {
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
