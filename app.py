@@ -211,13 +211,13 @@ class PedidoForm(FlaskForm):
         ('', '--- Seleccionar ---'),
         ('blusa_cochala',  'Blusa Cochala'),
         ('blusa_sucreña',  'Blusa Sucreña'),
-        ('pollera_cochala','Pollera Cochola'),
+        ('pollera_cochala','Pollera Cochala'),
         ('pollera_sucreña','Pollera Sucreña'),
-        ('juste_cochala',  'Juste Cochola'),
+        ('juste_cochala',  'Juste Cochala'),
         ('juste_sucreña',  'Juste Sucreña'),
-        ('centro_cochala', 'Centro Cochola'),
+        ('centro_cochala', 'Centro Cochala'),
         ('centro_sucreña', 'Centro Sucreña'),
-        ('inagua_cochala', 'Inagua Cochola'),
+        ('inagua_cochala', 'Inagua Cochala'),
         ('inagua_sucreña', 'Inagua Sucreña'),
     ], validators=[DataRequired()])
 

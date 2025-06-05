@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const item = document.createElement('button');
             item.type = 'button';
             item.classList.add('list-group-item', 'list-group-item-action');
-            item.textContent = c.nombre_completo;
+            item.textContent = c.nombre;
             item.dataset.id = c.id;
             item.addEventListener('click', function() {
               inputCliente.value = this.textContent;

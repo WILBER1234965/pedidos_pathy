@@ -161,3 +161,55 @@ header.navbar {
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
+.custom-alert {
+  display: flex;
+  align-items: center;
+  background-color: #fff;
+  padding: 0.8rem 1rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+  margin-bottom: 1rem;
+  position: relative;
+  border-left: 6px solid #23a6d5;
+  transition: all 0.4s ease;
+}
+
+.custom-alert .alert-icon {
+  font-size: 1.3rem;
+  margin-right: 0.8rem;
+  color: #23a6d5;
+}
+
+.custom-alert.alert-success {
+  border-left-color: #28a745;
+  background-color: #e6ffed;
+}
+
+.custom-alert.alert-danger {
+  border-left-color: #dc3545;
+  background-color: #ffe5e5;
+}
+
+.custom-alert.alert-warning {
+  border-left-color: #ffc107;
+  background-color: #fff8e1;
+}
+
+.custom-alert .alert-message {
+  flex-grow: 1;
+  font-size: 0.95rem;
+  color: #333;
+}
+
+.custom-alert .alert-close {
+  background: transparent;
+  border: none;
+  font-size: 1.2rem;
+  color: #888;
+  cursor: pointer;
+  margin-left: 0.5rem;
+}
+
+.custom-alert .alert-close:hover {
+  color: #000;
+}
