@@ -366,6 +366,24 @@ def cliente_editar(cliente_id):
                            action_url=url_for('cliente_editar', cliente_id=cliente.id),
                            titulo='Editar Cliente')
 
+@app.route('/admin/clientes/nuevo_ajax', methods=['POST'])
+@login_required
+@admin_required
+def cliente_nuevo_ajax():
+    """Crea un cliente vía solicitud AJAX y devuelve JSON."""
+    form = ClienteForm()
+    if form.validate_on_submit():
+        cliente = Cliente(
+            nombre_completo=form.nombre_completo.data.strip(),
+            telefono=form.telefono.data.strip(),
+            whatsapp=form.whatsapp.data.strip() if form.whatsapp.data else None
+        )
+        db.session.add(cliente)
+        db.session.commit()
+        return jsonify({'ok': True, 'id': cliente.id, 'nombre': cliente.nombre_completo})
+    # En caso de error, enviar mensajes
+    errores = {campo: errs for campo, errs in form.errors.items()}
+    return jsonify({'ok': False, 'errores': errores}), 400
 
 @app.route('/admin/clientes/buscar')
 @login_required
@@ -520,6 +538,25 @@ def obtener_medida(cliente_id, tipo_prenda):
         return jsonify({'existe': True, 'medida': data})
     else:
         return jsonify({'existe': False})
+@app.route('/admin/medidas/obtener')
+@login_required
+@admin_required
+def medidas_obtener():
+    """Devuelve todas las medidas existentes de un cliente para un tipo de prenda."""
+    cliente_id = request.args.get('cliente_id', type=int)
+    tipo = request.args.get('tipo_prenda')
+    if not cliente_id or not tipo:
+        return jsonify({'existe': False})
+
+    medidas = Medida.query.filter_by(cliente_id=cliente_id, tipo_prenda=tipo).all()
+    if not medidas:
+        return jsonify({'existe': False})
+
+    lista = []
+    for m in medidas:
+        lista.append({'id': m.id, 'descripcion_corta': f"#{m.id} - {m.fecha_creacion.strftime('%Y-%m-%d')}"})
+    return jsonify({'existe': True, 'medidas': lista})
+
 
 
 # -------------------------------------------------

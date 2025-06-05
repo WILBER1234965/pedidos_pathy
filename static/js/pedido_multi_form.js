@@ -57,6 +57,14 @@ document.addEventListener('DOMContentLoaded', function() {
       sugerencias.innerHTML = '';
     }
   });
+  const modalClienteEl = document.getElementById('modalCrearCliente');
+  if (modalClienteEl) {
+    modalClienteEl.addEventListener('show.bs.modal', function () {
+      sugerencias.innerHTML = '';
+      document.getElementById('errorCliente').textContent = '';
+      document.getElementById('formCrearClienteModal').reset();
+    });
+  }
 
   // 2) AL CAMBIAR EL SELECTOR DE PRENDA EN CUALQUIER BLOQUE
   function onChangeTipoPrenda(event) {
@@ -264,6 +272,32 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // 6) VINCULAR AL SELECT DEL BLOQUE 0 el listener onChangeTipoPrenda
   document.getElementById('selectTipoPrenda_0').addEventListener('change', onChangeTipoPrenda);
+ // Manejar envío del formulario de nuevo cliente
+  const formClienteModal = document.getElementById('formCrearClienteModal');
+  if (formClienteModal) {
+    formClienteModal.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const datos = new FormData(formClienteModal);
+      // Reutilizamos el token CSRF generado en el formulario principal
+      const csrf = document.querySelector('input[name="csrf_token"]').value;
+      datos.append('csrf_token', csrf);
+      fetch('/admin/clientes/nuevo_ajax', {
+        method: 'POST',
+        body: datos
+      })
+        .then(r => r.json())
+        .then(resp => {
+          if (resp.ok) {
+            inputCliente.value = resp.nombre;
+            clienteHidden.value = resp.id;
+            const modal = bootstrap.Modal.getInstance(modalClienteEl);
+            modal.hide();
+          } else if (resp.errores) {
+            document.getElementById('errorCliente').textContent = Object.values(resp.errores).join(' ');
+          }
+        });
+    });
+  }
 
   // 7) ESCUCHAR EDICIÓN DEL FORMULARIO PARA VALIDAR QUE EXISTA AL MENOS UNA PRENDA Y UN CLIENTE
   formPedido.addEventListener('submit', function(e) {

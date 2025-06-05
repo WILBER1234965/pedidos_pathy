@@ -36,7 +36,7 @@
     <input type="text" class="form-control" id="autocompleteCliente" placeholder="Ingrese nombre de cliente...">
     <input type="hidden" id="clienteIdHidden" name="cliente_id" value="{% if pedido %}{{ pedido.cliente.id }}{% endif %}">
     <small class="form-text text-muted">Escribe al menos 3 caracteres para buscar.</small>
-    <div id="sugerenciasClientes" class="list-group position-absolute w-50" style="z-index: 2000;"></div>
+    <div id="sugerenciasClientes" class="list-group position-absolute w-50" style="z-index: 1040;"></div>
   </div>
 
   {# Si el cliente no existe, mostramos un botón para crear nuevo cliente #}
@@ -105,6 +105,7 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <form id="formCrearClienteModal">
+        <input type="hidden" name="csrf_token" value="{{ form.csrf_token._value() }}">
         <div class="modal-header">
           <h5 class="modal-title" id="tituloModalCliente">Registrar nuevo cliente</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
