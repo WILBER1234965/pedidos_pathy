@@ -1,0 +1,52 @@
+{% extends 'admin/base.html' %}
+{% block title %}Detalle Cliente{% endblock %}
+
+{% block content %}
+<h1>Detalle de {{ cliente.nombre_completo }}</h1>
+<p><strong>Teléfono:</strong> {{ cliente.telefono }}  |  <strong>WhatsApp:</strong> {{ cliente.whatsapp or '-' }}</p>
+
+<hr>
+<h4>Medidas registradas</h4>
+
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th>Tipo de prenda</th>
+      <th>Fecha creación</th>
+      <th>Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for m in cliente.medidas %}
+    <tr>
+      <td>{{ m.tipo_prenda.replace('_',' ').title() }}</td>
+      <td>{{ m.fecha_creacion.strftime('%Y-%m-%d') }}</td>
+      <td>
+        <a href="{{ url_for('editar_medida', medida_id=m.id) }}" class="btn btn-sm btn-warning">Editar</a>
+      </td>
+    </tr>
+    {% endfor %}
+    {% if not cliente.medidas %}
+    <tr>
+      <td colspan="3" class="text-center">No hay medidas registradas.</td>
+    </tr>
+    {% endif %}
+  </tbody>
+</table>
+
+<hr>
+<button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalAgregarMedida" onclick="abrirMedidaModal('{{ url_for('agregar_medida', cliente_id=cliente.id) }}', 'Agregar Medida')">+ Agregar Medida</button>
+
+<div class="modal fade" id="modalAgregarMedida" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="medidaModalTitle"></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body" id="medidaModalBody">
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

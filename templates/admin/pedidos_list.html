@@ -1,0 +1,46 @@
+{% extends 'admin/base.html' %}
+{% block title %}Pedidos{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between mb-3">
+  <h1>Pedidos</h1>
+  <a href="{{ url_for('pedido_nuevo') }}" class="btn btn-success">+ Nuevo Pedido</a>
+</div>
+
+<table class="table table-striped align-middle">
+  <thead>
+    <tr>
+      <th>#Orden</th>
+      <th>Cliente</th>
+      <th>Prenda</th>
+      <th>Entrega</th>
+      <th>Estado</th>
+      <th>Total (Bs)</th>
+      <th>Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for p in pedidos %}
+    <tr>
+      <td>{{ p.numero_orden }}</td>
+      <td>{{ p.cliente.nombre_completo }}</td>
+      <td>{{ p.tipo_prenda.replace('_',' ').title() }}</td>
+      <td>{{ p.fecha_entrega.strftime('%Y-%m-%d') }}</td>
+      <td>{{ p.estado.replace('_',' ').title() }}</td>
+      <td>{{ p.total or '—' }}</td>
+      <td>
+        <a href="{{ url_for('pedido_editar', pedido_id=p.id) }}" class="btn btn-sm btn-primary">Editar</a>
+        <form action="{{ url_for('pedido_eliminar', pedido_id=p.id) }}" method="POST" class="d-inline" onsubmit="return confirm('¿Eliminar pedido {{ p.numero_orden }}?');">
+          <button type="submit" class="btn btn-sm btn-danger">Eliminar</button>
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+    {% if not pedidos %}
+    <tr>
+      <td colspan="7" class="text-center">No hay pedidos registrados.</td>
+    </tr>
+    {% endif %}
+  </tbody>
+</table>
+{% endblock %}

@@ -1,0 +1,19 @@
+<form method="POST" action="{{ action_url }}">
+  {{ form.hidden_tag() }}
+  <div class="mb-3">
+    {{ form.nombre_completo.label(class="form-label") }}
+    {{ form.nombre_completo(class="form-control", placeholder="Nombre completo") }}
+  </div>
+  <div class="mb-3">
+    {{ form.telefono.label(class="form-label") }}
+    {{ form.telefono(class="form-control", placeholder="Teléfono") }}
+  </div>
+  <div class="mb-3">
+    {{ form.whatsapp.label(class="form-label") }}
+    {{ form.whatsapp(class="form-control", placeholder="WhatsApp (opcional)") }}
+  </div>
+  <div class="text-end">
+    <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Cancelar</button>
+    {{ form.submit(class="btn btn-primary") }}
+  </div>
+</form>

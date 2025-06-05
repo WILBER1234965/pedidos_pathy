@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Resultado – Rastrear Pedido</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<nav class="navbar navbar-light bg-light">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="/">Modas Pathy</a>
+  </div>
+</nav>
+
+<div class="container mt-5">
+  <h1>Estado del pedido {{ pedido.numero_orden }}</h1>
+  <div class="card mt-4">
+    <div class="card-body">
+      <p><strong>Cliente:</strong> {{ pedido.cliente.nombre_completo }}</p>
+      <p><strong>Tipo de prenda:</strong> {{ pedido.tipo_prenda.replace('_',' ').title() }}</p>
+      <p><strong>Estado actual:</strong> {{ pedido.estado.replace('_',' ').title() }}</p>
+      <p><strong>Fecha de entrega:</strong> {{ pedido.fecha_entrega.strftime('%Y-%m-%d') }}</p>
+      <p><strong>Teléfono/WhatsApp:</strong> {{ pedido.cliente.telefono }} {% if pedido.cliente.whatsapp %} / {{ pedido.cliente.whatsapp }}{% endif %}</p>
+    </div>
+  </div>
+  <a href="{{ url_for('rastrear_pedido') }}" class="btn btn-secondary mt-3">Buscar otro pedido</a>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

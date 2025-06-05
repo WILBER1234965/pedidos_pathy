@@ -1,0 +1,83 @@
+{% extends 'admin/base.html' %}
+{% block title %}{% if editar %}Editar Pedido{% else %}Nuevo Pedido{% endif %}{% endblock %}
+
+{% block content %}
+<h1>{% if editar %}Editar Pedido{% else %}Nuevo Pedido{% endif %}</h1>
+
+<form method="POST" id="formPedido">
+  {{ form.hidden_tag() }}
+
+  <div class="row mb-3">
+    <div class="col-md-8">
+      <label for="autocompleteCliente" class="form-label">Buscar cliente</label>
+      <input type="text" class="form-control" id="autocompleteCliente" placeholder="Ingrese nombre de cliente">
+      <input type="hidden" name="cliente_id" id="cliente_id" value="{% if editar %}{{ pedido.cliente_id }}{% endif %}">
+      <button type="button" class="btn btn-link mt-1" data-bs-toggle="modal" data-bs-target="#clienteModal" onclick="abrirModalCliente('{{ url_for('cliente_nuevo') }}', 'Nuevo Cliente')">+ Nuevo Cliente</button>
+      <div id="infoClienteSeleccionado" class="mt-2">
+        {% if editar %}
+          <strong>Cliente actual:</strong> {{ pedido.cliente.nombre_completo }}
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="row mb-3">
+    <div class="col-md-4">
+      {{ form.tipo_prenda.label(class="form-label") }}
+      {{ form.tipo_prenda(class="form-select", id="tipo_prenda") }}
+    </div>
+  </div>
+
+  <!-- Bloque dinámico de medidas -->
+  <div id="bloque_medidas">
+  </div>
+
+  <div class="row mb-3">
+    <div class="col-md-4">
+      {{ form.fecha_entrega.label(class="form-label") }}
+      {{ form.fecha_entrega(class="form-control", id="fecha_entrega") }}
+    </div>
+    <div class="col-md-4">
+      {{ form.adelanto.label(class="form-label") }}
+      {{ form.adelanto(class="form-control", step="0.01") }}
+    </div>
+    <div class="col-md-4">
+      {{ form.total.label(class="form-label") }}
+      {{ form.total(class="form-control", step="0.01") }}
+    </div>
+  </div>
+
+  <div class="text-end">
+    <a href="{{ url_for('pedidos_list') }}" class="btn btn-secondary me-2">Cancelar</a>
+    {{ form.submit(class="btn btn-primary") }}
+  </div>
+</form>
+
+<div class="modal fade" id="clienteModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="clienteModalTitle"></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body" id="clienteModalBody"></div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block scripts_extra %}
+<script>
+  const EDITANDO = {{ 'true' if editar else 'false' }};
+  {% if editar %}
+    const PEDIDO_ID = {{ pedido.id }};
+    const CLIENTE_ID_ACTUAL = {{ pedido.cliente_id }};
+    const TIPO_PRENDA_ACTUAL = "{{ pedido.tipo_prenda }}";
+  {% else %}
+    const PEDIDO_ID = null;
+    const CLIENTE_ID_ACTUAL = null;
+    const TIPO_PRENDA_ACTUAL = null;
+  {% endif %}
+</script>
+{% endblock %}

@@ -1,0 +1,8 @@
+Flask>=2.0
+Flask-SQLAlchemy>=2.5
+Flask-Migrate>=3.1
+Flask-Login>=0.5
+Flask-WTF>=1.0
+wtforms>=3.0
+Flask-Bootstrap>=3.3.7.1
+k

@@ -1,0 +1,103 @@
+{% extends 'admin/base.html' %}
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Dashboard</h1>
+
+<div class="row">
+  <div class="col-md-3">
+    <div class="card text-white bg-primary mb-3">
+      <div class="card-body">
+        <h5 class="card-title">Pedidos últimos 30 días</h5>
+        <p class="card-text display-6">{{ total_30 }}</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card text-white bg-success mb-3">
+      <div class="card-body">
+        <h5 class="card-title">Clientes nuevos (última semana)</h5>
+        <p class="card-text display-6">{{ clientes_semana }}</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card text-white bg-warning mb-3">
+      <div class="card-body">
+        <h5 class="card-title">Pendientes hoy</h5>
+        <p class="card-text display-6">{{ pendientes_hoy|length }}</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-6">
+    <h4>Pedidos por estado</h4>
+    <canvas id="graficoEstados"></canvas>
+  </div>
+  <div class="col-md-6">
+    <h4>Últimos 5 pedidos</h4>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>#Orden</th>
+          <th>Cliente</th>
+          <th>Prenda</th>
+          <th>Creación</th>
+          <th>Estado</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for p in ultimos_5 %}
+        <tr>
+          <td>{{ p.numero_orden }}</td>
+          <td>{{ p.cliente.nombre_completo }}</td>
+          <td>{{ p.tipo_prenda.replace('_',' ').title() }}</td>
+          <td>{{ p.fecha_creacion.strftime('%Y-%m-%d') }}</td>
+          <td>{{ p.estado.replace('_',' ').title() }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts_extra %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const ctx = document.getElementById('graficoEstados').getContext('2d');
+    const datos = {
+      labels: [
+        {% for estado, cuenta in estados %}
+          "{{ estado.replace('_', ' ') | upper }}",
+        {% endfor %}
+      ],
+      datasets: [{
+        label: 'Cantidad de pedidos',
+        data: [
+          {% for estado, cuenta in estados %}
+            {{ cuenta }},
+          {% endfor %}
+        ],
+        backgroundColor: [
+          'rgba(255, 99, 132, 0.6)',
+          'rgba(54, 162, 235, 0.6)',
+          'rgba(255, 206, 86, 0.6)',
+          'rgba(75, 192, 192, 0.6)'
+        ],
+        borderWidth: 1
+      }]
+    };
+    new Chart(ctx, {
+      type: 'pie',
+      data: datos,
+      options: {
+        responsive: true
+      }
+    });
+  });
+</script>
+{% endblock %}

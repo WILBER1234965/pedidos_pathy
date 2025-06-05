@@ -1,0 +1,56 @@
+<form method="POST" action="{{ action_url }}">
+  {{ form.hidden_tag() }}
+  <div class="mb-3">
+    {{ form.tipo_prenda.label(class="form-label") }}
+    {{ form.tipo_prenda(class="form-select", id="tipo_prenda_medida") }}
+  </div>
+
+  <div id="bloque_medida_cliente">
+    <!-- Se cargará dinámicamente con JS -->
+  </div>
+
+  <div class="text-end mt-3">
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+    {{ form.submit(class="btn btn-primary") }}
+  </div>
+</form>
+<script>
+  const EDICION_MEDIDA = {{ 'true' if editar else 'false' }};
+  {% if editar %}
+    const MEDIDA_ID = {{ medida.id }};
+    const TIPO_PRENDA_MED = "{{ medida.tipo_prenda }}";
+    const CLIENTE_ID = {{ medida.cliente_id }};
+  {% else %}
+    const MEDIDA_ID = null;
+    const TIPO_PRENDA_MED = null;
+    const CLIENTE_ID = {{ cliente_id or 'null' }};
+  {% endif %}
+
+  $(document).ready(function() {
+    generarBloquesMedida();
+
+    if (EDICION_MEDIDA && TIPO_PRENDA_MED) {
+      $('#tipo_prenda_medida').val(TIPO_PRENDA_MED).trigger('change');
+      $.ajax({
+        url: `/admin/medidas/${MEDIDA_ID}/json`,
+        method: 'GET',
+        success: function(res) {
+          const datos = res.medida;
+          Object.keys(datos).forEach(function(campo) {
+            if ($('#' + campo).length) {
+              $('#' + campo).val(datos[campo]);
+            }
+          });
+        }
+      });
+    }
+
+    $('#tipo_prenda_medida').on('change', function() {
+      let seleccionado = $(this).val();
+      $('.bloque-prenda').removeClass('activo');
+      if (seleccionado) {
+        $(`#bloque_${seleccionado}`).addClass('activo');
+      }
+    });
+  });
+</script>
