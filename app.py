@@ -12,7 +12,6 @@ from sqlalchemy import func
 # -------------------------------------------------
 # CONFIGURACIÓN DE LA APLICACIÓN
 # -------------------------------------------------
-
 def create_app():
     app = Flask(__name__)
     app.config.from_object('config.Config')
@@ -28,18 +27,18 @@ def create_app():
 db = SQLAlchemy()
 migrate = Migrate()
 login_manager = LoginManager()
-login_manager.login_view = 'login'  # Redirige a '/login' cuando se requiera autenticación
+login_manager.login_view = 'login'
+
 
 # -------------------------------------------------
 # MODELOS
 # -------------------------------------------------
-
 class Cliente(db.Model):
     __tablename__ = 'clientes'
-    id = db.Column(db.Integer, primary_key=True)
+    id              = db.Column(db.Integer, primary_key=True)
     nombre_completo = db.Column(db.String(150), nullable=False)
-    telefono = db.Column(db.String(50), nullable=False)
-    whatsapp = db.Column(db.String(50), nullable=True)
+    telefono        = db.Column(db.String(50), nullable=False)
+    whatsapp        = db.Column(db.String(50), nullable=True)
 
     medidas = db.relationship('Medida', backref='cliente', lazy=True)
     pedidos = db.relationship('Pedido', backref='cliente', lazy=True)
@@ -50,44 +49,45 @@ class Cliente(db.Model):
 
 class Medida(db.Model):
     __tablename__ = 'medidas'
-    id = db.Column(db.Integer, primary_key=True)
-    cliente_id = db.Column(db.Integer, db.ForeignKey('clientes.id'), nullable=False)
-    tipo_prenda = db.Column(db.Enum(
+    id                 = db.Column(db.Integer, primary_key=True)
+    cliente_id         = db.Column(db.Integer, db.ForeignKey('clientes.id'), nullable=False)
+    tipo_prenda        = db.Column(db.Enum(
         'blusa_cochala', 'blusa_sucreña',
         'pollera_cochala', 'pollera_sucreña',
         'juste_cochala', 'juste_sucreña',
         'centro_cochala', 'centro_sucreña',
+        'inagua_cochala', 'inagua_sucreña',
         name='tipo_prenda_enum'
     ), nullable=False)
 
-    # Campos de medida para todas las prendas. Si no aplican, pueden quedar nulos.
-    largo_espalda   = db.Column(db.Numeric, nullable=True)
-    largo_delantero = db.Column(db.Numeric, nullable=True)
-    cintura         = db.Column(db.Numeric, nullable=True)
-    busto           = db.Column(db.Numeric, nullable=True)
-    media_cintura   = db.Column(db.Numeric, nullable=True)
-    sisa            = db.Column(db.Numeric, nullable=True)
-    escote          = db.Column(db.Numeric, nullable=True)
-    largo_manga     = db.Column(db.Numeric, nullable=True)
-    puño            = db.Column(db.Numeric, nullable=True)
-    cuello          = db.Column(db.Numeric, nullable=True)
-    abertura        = db.Column(db.Numeric, nullable=True)
-    ancho_espalda   = db.Column(db.Numeric, nullable=True)
-    figura          = db.Column(db.String(100), nullable=True)
+    # Campos de medida para todas las prendas (null si no aplica)
+    largo_espalda     = db.Column(db.Numeric, nullable=True)
+    largo_delantero   = db.Column(db.Numeric, nullable=True)
+    cintura           = db.Column(db.Numeric, nullable=True)
+    busto             = db.Column(db.Numeric, nullable=True)
+    media_cintura     = db.Column(db.Numeric, nullable=True)
+    sisa              = db.Column(db.Numeric, nullable=True)
+    escote            = db.Column(db.Numeric, nullable=True)
+    largo_manga       = db.Column(db.Numeric, nullable=True)
+    puño             = db.Column(db.Numeric, nullable=True)
+    cuello            = db.Column(db.Numeric, nullable=True)
+    abertura          = db.Column(db.Numeric, nullable=True)
+    ancho_espalda     = db.Column(db.Numeric, nullable=True)
+    figura            = db.Column(db.String(100), nullable=True)
 
-    alforza = db.Column(db.Numeric, nullable=True)
-    paños   = db.Column(db.Integer, nullable=True)
-    wato    = db.Column(db.Numeric, nullable=True)
-    corridas= db.Column(db.Numeric, nullable=True)
-    color   = db.Column(db.String(50), nullable=True)
-    cadera  = db.Column(db.Numeric, nullable=True)
-    talla   = db.Column(db.String(30), nullable=True)
-    quebrado= db.Column(db.Numeric, nullable=True)
-    pierna  = db.Column(db.Numeric, nullable=True)
+    alforza           = db.Column(db.Numeric, nullable=True)
+    paños             = db.Column(db.Integer, nullable=True)
+    wato              = db.Column(db.Numeric, nullable=True)
+    corridas          = db.Column(db.Numeric, nullable=True)
+    color             = db.Column(db.String(50), nullable=True)
+    cadera            = db.Column(db.Numeric, nullable=True)
+    talla             = db.Column(db.String(30), nullable=True)
+    quebrado          = db.Column(db.Numeric, nullable=True)
+    pierna            = db.Column(db.Numeric, nullable=True)
 
-    fotos = db.Column(db.String(200), nullable=True)  # Ruta o nombre de archivo con fotos
+    fotos             = db.Column(db.String(200), nullable=True)  # Ruta o nombre de archivo con fotos
 
-    pedidos = db.relationship('Pedido', backref='medida', lazy=True)
+    pedidos           = db.relationship('Pedido', backref='medida', lazy=True)
 
     fecha_creacion     = db.Column(db.DateTime, default=datetime.utcnow)
     fecha_actualizacion= db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
@@ -98,23 +98,24 @@ class Medida(db.Model):
 
 class Pedido(db.Model):
     __tablename__ = 'pedidos'
-    id = db.Column(db.Integer, primary_key=True)
-    numero_orden = db.Column(db.String(20), unique=True, nullable=False)
-    cliente_id   = db.Column(db.Integer, db.ForeignKey('clientes.id'), nullable=False)
-    tipo_prenda  = db.Column(db.Enum(
+    id              = db.Column(db.Integer, primary_key=True)
+    numero_orden    = db.Column(db.String(20), unique=True, nullable=False)
+    cliente_id      = db.Column(db.Integer, db.ForeignKey('clientes.id'), nullable=False)
+    tipo_prenda     = db.Column(db.Enum(
         'blusa_cochala', 'blusa_sucreña',
         'pollera_cochala', 'pollera_sucreña',
         'juste_cochala', 'juste_sucreña',
         'centro_cochala', 'centro_sucreña',
+        'inagua_cochala', 'inagua_sucreña',
         name='tipo_prenda_enum'
     ), nullable=False)
-    medida_id    = db.Column(db.Integer, db.ForeignKey('medidas.id'), nullable=False)
+    medida_id       = db.Column(db.Integer, db.ForeignKey('medidas.id'), nullable=False)
 
-    fecha_entrega = db.Column(db.Date, nullable=False)
-    adelanto      = db.Column(db.Numeric(scale=2), nullable=False)
-    total         = db.Column(db.Numeric(scale=2), nullable=True)
+    fecha_entrega    = db.Column(db.Date, nullable=False)
+    adelanto         = db.Column(db.Numeric(scale=2), nullable=False)
+    total            = db.Column(db.Numeric(scale=2), nullable=True)
 
-    estado = db.Column(db.Enum(
+    estado           = db.Column(db.Enum(
         'pendiente', 'en_proceso', 'listo_para_recoger', 'entregado',
         name='estado_pedido_enum'
     ), default='pendiente', nullable=False)
@@ -146,7 +147,6 @@ def load_user(user_id):
 # -------------------------------------------------
 # FORMULARIOS (Flask-WTF)
 # -------------------------------------------------
-
 class LoginForm(FlaskForm):
     username = StringField('Usuario', validators=[DataRequired()])
     password = PasswordField('Contraseña', validators=[DataRequired()])
@@ -164,12 +164,14 @@ class MedidaForm(FlaskForm):
     tipo_prenda = SelectField('Tipo de prenda', choices=[
         ('blusa_cochala',  'Blusa Cochala'),
         ('blusa_sucreña',  'Blusa Sucreña'),
-        ('pollera_cochala','Pollera Cochola'),
+        ('pollera_cochala','Pollera Cochala'),
         ('pollera_sucreña','Pollera Sucreña'),
-        ('juste_cochala',  'Juste Cochola'),
+        ('juste_cochala',  'Juste Cochala'),
         ('juste_sucreña',  'Juste Sucreña'),
-        ('centro_cochala', 'Centro Cochola'),
+        ('centro_cochala', 'Centro Cochala'),
         ('centro_sucreña', 'Centro Sucreña'),
+        ('inagua_cochala', 'Inagua Cochala'),
+        ('inagua_sucreña', 'Inagua Sucreña'),
     ], validators=[DataRequired()])
 
     # Campos para blusas
@@ -185,7 +187,7 @@ class MedidaForm(FlaskForm):
     cuello          = DecimalField('Cuello',          validators=[Optional(), NumberRange(min=0)])
     abertura        = DecimalField('Abertura',        validators=[Optional(), NumberRange(min=0)])
     ancho_espalda   = DecimalField('Ancho espalda',   validators=[Optional(), NumberRange(min=0)])
-    figura          = StringField('Figura',          validators=[Optional()])
+    figura          = StringField('Figura',           validators=[Optional()])
     fotos           = FileField('Fotos (jpg/png)',   validators=[Optional()])
 
     # Campos para polleras
@@ -203,10 +205,11 @@ class MedidaForm(FlaskForm):
 
 
 class PedidoForm(FlaskForm):
-    cliente_id  = IntegerField('Cliente ID (oculto)', validators=[Optional()])
-    tipo_prenda = SelectField('Tipo de prenda', choices=[
+    # Este formulario se usa para la parte "datos generales" (cliente_id, fecha, adelanto, total)
+    cliente_id   = IntegerField('Cliente ID', validators=[Optional()])
+    tipo_prenda  = SelectField('Tipo de prenda', choices=[
         ('', '--- Seleccionar ---'),
-        ('blusa_cochala',  'Blusa Cochola'),
+        ('blusa_cochala',  'Blusa Cochala'),
         ('blusa_sucreña',  'Blusa Sucreña'),
         ('pollera_cochala','Pollera Cochola'),
         ('pollera_sucreña','Pollera Sucreña'),
@@ -214,6 +217,8 @@ class PedidoForm(FlaskForm):
         ('juste_sucreña',  'Juste Sucreña'),
         ('centro_cochala', 'Centro Cochola'),
         ('centro_sucreña', 'Centro Sucreña'),
+        ('inagua_cochala', 'Inagua Cochola'),
+        ('inagua_sucreña', 'Inagua Sucreña'),
     ], validators=[DataRequired()])
 
     fecha_entrega = DateField('Fecha de entrega', validators=[DataRequired()])
@@ -224,14 +229,14 @@ class PedidoForm(FlaskForm):
 
 class RastrearForm(FlaskForm):
     numero_orden = StringField('Número de orden', validators=[DataRequired()])
-    submit        = SubmitField('Buscar')
+    submit       = SubmitField('Buscar')
 
 
 # -------------------------------------------------
 # APLICACIÓN FLASK
 # -------------------------------------------------
-
 app = create_app()
+
 
 # Decorador para restringir solo a usuarios con rol “administrador”
 def admin_required(f):
@@ -243,30 +248,27 @@ def admin_required(f):
         return f(*args, **kwargs)
     return decorated
 
-# -------------------------------------------------
-# RUTA MÍNIMA DE LOGIN / LOGOUT
-# -------------------------------------------------
 
+# -------------------------------------------------
+# RUTA LOGIN / LOGOUT
+# -------------------------------------------------
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
     if form.validate_on_submit():
-        # En este ejemplo de prueba, aceptamos cualquier usuario/contraseña.
-        # Si no existe en la base de datos, lo creamos con rol 'administrador'.
+        # A modo de ejemplo, si el usuario no existe lo creamos con rol administrador
         usuario = User.query.filter_by(username=form.username.data).first()
         if not usuario:
             usuario = User(
                 username=form.username.data,
-                password_hash='dummy',  # no se usa validación real de contraseña
+                password_hash='dummy',  # Password no validado aquí
                 nombre=form.username.data,
                 rol='administrador'
             )
             db.session.add(usuario)
             db.session.commit()
 
-        # Hacemos login
         login_user(usuario)
-        # Redirigir al “next” (si Flask-Login lo pasó) o al dashboard
         return redirect(request.args.get('next') or url_for('dashboard'))
 
     return render_template('admin/login.html', form=form)
@@ -278,10 +280,10 @@ def logout():
     logout_user()
     return redirect(url_for('login'))
 
-# -------------------------------------------------
-# RUTAS DEL PANEL DE ADMINISTRACIÓN
-# -------------------------------------------------
 
+# -------------------------------------------------
+# DASHBOARD / MÉTRICAS
+# -------------------------------------------------
 @app.route('/admin/dashboard')
 @login_required
 @admin_required
@@ -290,6 +292,7 @@ def dashboard():
     hace_30 = hoy.replace(day=1)
     total_30 = Pedido.query.filter(Pedido.fecha_creacion >= hace_30).count()
 
+    # Conteo por estado
     estados = db.session.query(Pedido.estado, func.count(Pedido.id)) \
         .group_by(Pedido.estado).all()
 
@@ -313,6 +316,9 @@ def dashboard():
                            ultimos_5=ultimos_5)
 
 
+# -------------------------------------------------
+# RUTAS DE CLIENTES
+# -------------------------------------------------
 @app.route('/admin/clientes')
 @login_required
 @admin_required
@@ -361,51 +367,6 @@ def cliente_editar(cliente_id):
                            titulo='Editar Cliente')
 
 
-@app.route('/admin/clientes/<int:cliente_id>/medidas/<tipo_prenda>')
-@login_required
-@admin_required
-def obtener_medida(cliente_id, tipo_prenda):
-    """
-    Devuelve JSON con la última Medida registrada para el cliente y tipo_prenda dado.
-    """
-    medida = Medida.query.filter_by(
-        cliente_id=cliente_id,
-        tipo_prenda=tipo_prenda
-    ).order_by(Medida.fecha_creacion.desc()).first()
-
-    if medida:
-        data = {
-            'id': medida.id,
-            'tipo_prenda': medida.tipo_prenda,
-            'largo_espalda':    str(medida.largo_espalda or ''),
-            'largo_delantero':  str(medida.largo_delantero or ''),
-            'cintura':          str(medida.cintura or ''),
-            'busto':            str(medida.busto or ''),
-            'media_cintura':    str(medida.media_cintura or ''),
-            'sisa':             str(medida.sisa or ''),
-            'escote':           str(medida.escote or ''),
-            'largo_manga':      str(medida.largo_manga or ''),
-            'puño':             str(medida.puño or ''),
-            'cuello':           str(medida.cuello or ''),
-            'abertura':         str(medida.abertura or ''),
-            'ancho_espalda':    str(medida.ancho_espalda or ''),
-            'figura':           medida.figura or '',
-            'alforza':          str(medida.alforza or ''),
-            'paños':            medida.paños or '',
-            'wato':             str(medida.wato or ''),
-            'corridas':         str(medida.corridas or ''),
-            'color':            medida.color or '',
-            'cadera':           str(medida.cadera or ''),
-            'talla':            medida.talla or '',
-            'quebrado':         str(medida.quebrado or ''),
-            'pierna':           str(medida.pierna or ''),
-            'fotos':            medida.fotos or ''
-        }
-        return jsonify({'existe': True, 'medida': data})
-    else:
-        return jsonify({'existe': False})
-
-
 @app.route('/admin/clientes/buscar')
 @login_required
 @admin_required
@@ -417,6 +378,7 @@ def buscar_cliente():
     q = request.args.get('q', '').strip()
     if not q:
         return jsonify([])
+
     resultados = Cliente.query.filter(
         Cliente.nombre_completo.ilike(f'%{q}%')
     ).limit(10).all()
@@ -425,6 +387,9 @@ def buscar_cliente():
     return jsonify(lista)
 
 
+# -------------------------------------------------
+# RUTAS DE MEDIDAS
+# -------------------------------------------------
 @app.route('/admin/clientes/<int:cliente_id>/medidas/nuevo', methods=['GET', 'POST'])
 @login_required
 @admin_required
@@ -457,6 +422,9 @@ def agregar_medida(cliente_id):
 @login_required
 @admin_required
 def json_medida(medida_id):
+    """
+    Devuelve JSON con los valores de una Medida específica (para precargar en formulario).
+    """
     m = Medida.query.get_or_404(medida_id)
     data = {
         'largo_espalda':    str(m.largo_espalda or ''),
@@ -480,7 +448,8 @@ def json_medida(medida_id):
         'cadera':           str(m.cadera or ''),
         'talla':            m.talla or '',
         'quebrado':         str(m.quebrado or ''),
-        'pierna':           str(m.pierna or '')
+        'pierna':           str(m.pierna or ''),
+        'fotos':            m.fotos or ''
     }
     return jsonify({'medida': data})
 
@@ -509,6 +478,53 @@ def editar_medida(medida_id):
                            medida=medida)
 
 
+@app.route('/admin/clientes/<int:cliente_id>/medidas/<tipo_prenda>')
+@login_required
+@admin_required
+def obtener_medida(cliente_id, tipo_prenda):
+    """
+    RUTA AJAX: Devuelve JSON con la última Medida registrada para el cliente y tipo_prenda dado.
+    """
+    medida = Medida.query.filter_by(
+        cliente_id=cliente_id,
+        tipo_prenda=tipo_prenda
+    ).order_by(Medida.fecha_creacion.desc()).first()
+
+    if medida:
+        data = {
+            'id': medida.id,
+            'tipo_prenda': medida.tipo_prenda,
+            'largo_espalda':    str(medida.largo_espalda or ''),
+            'largo_delantero':  str(medida.largo_delantero or ''),
+            'cintura':          str(medida.cintura or ''),
+            'busto':            str(medida.busto or ''),
+            'media_cintura':    str(medida.media_cintura or ''),
+            'sisa':             str(medida.sisa or ''),
+            'escote':           str(medida.escote or ''),
+            'largo_manga':      str(medida.largo_manga or ''),
+            'puño':             str(medida.puño or ''),
+            'cuello':           str(medida.cuello or ''),
+            'abertura':         str(medida.abertura or ''),
+            'ancho_espalda':    str(medida.ancho_espalda or ''),
+            'figura':           medida.figura or '',
+            'alforza':          str(medida.alforza or ''),
+            'paños':            medida.paños or '',
+            'wato':             str(medida.wato or ''),
+            'corridas':         str(medida.corridas or ''),
+            'color':            medida.color or '',
+            'cadera':           str(medida.cadera or ''),
+            'talla':            medida.talla or '',
+            'quebrado':         str(medida.quebrado or ''),
+            'pierna':           str(medida.pierna or '')
+        }
+        return jsonify({'existe': True, 'medida': data})
+    else:
+        return jsonify({'existe': False})
+
+
+# -------------------------------------------------
+# RUTAS DE PEDIDOS
+# -------------------------------------------------
 @app.route('/admin/pedidos')
 @login_required
 @admin_required
@@ -521,13 +537,23 @@ def pedidos_list():
 @login_required
 @admin_required
 def pedido_nuevo():
-    form = PedidoForm()
+    """
+    Ruta para crear uno o varios pedidos en un solo envío.
+    """
+    form = PedidoForm()  # ✅ Importante: para CSRF y validaciones
+    tipos_prenda = [
+        'blusa_cochala', 'blusa_sucreña',
+        'pollera_cochala', 'pollera_sucreña',
+        'juste_cochala', 'juste_sucreña',
+        'centro_cochala', 'centro_sucreña',
+        'inagua_cochala', 'inagua_sucreña'
+    ]
     if request.method == 'POST':
-        cliente_id  = request.form.get('cliente_id')
-        tipo_prenda = request.form.get('tipo_prenda')
-        fecha_entrega= form.fecha_entrega.data
-        adelanto     = form.adelanto.data
-        total        = form.total.data if form.total.data else None
+        # 1) Datos generales
+        cliente_id = request.form.get('cliente_id')
+        fecha_entrega = request.form.get('fecha_entrega')
+        adelanto = request.form.get('adelanto')
+        total = request.form.get('total') or None
 
         errores = []
         if not cliente_id:
@@ -537,115 +563,175 @@ def pedido_nuevo():
             if not cliente:
                 errores.append('El cliente seleccionado no existe.')
 
-        if not tipo_prenda:
-            errores.append('Debe seleccionar un tipo de prenda.')
+        # Validar fecha_entrega
+        try:
+            fecha_entrega_date = datetime.strptime(fecha_entrega, '%Y-%m-%d').date()
+            if fecha_entrega_date < date.today():
+                errores.append('La fecha de entrega no puede ser anterior a hoy.')
+        except:
+            errores.append('Formato de fecha inválido.')
 
-        if fecha_entrega < date.today():
-            errores.append('La fecha de entrega no puede ser anterior a hoy.')
+        # Validar adelanto
+        try:
+            adelanto_val = float(adelanto)
+            if adelanto_val < 0:
+                errores.append('El adelanto debe ser mayor o igual a 0.')
+        except:
+            errores.append('El adelanto debe ser un número válido.')
 
-        if adelanto is None or adelanto < 0:
-            errores.append('El adelanto debe ser numérico y mayor o igual a 0.')
+        # Validar total
+        total_val = None
+        if total:
+            try:
+                total_val = float(total)
+                if total_val < 0:
+                    errores.append('El total debe ser mayor o igual a 0.')
+            except:
+                errores.append('El total debe ser un número válido.')
 
-        # Validar campos de medida dinámicos
-        medida_campos = {}
-        for campo in [
-            'largo_espalda','largo_delantero','cintura','busto','media_cintura','sisa',
-            'escote','largo_manga','puño','cuello','abertura','ancho_espalda','figura',
-            'alforza','paños','wato','corridas','color','cadera','talla','quebrado','pierna'
-        ]:
-            valor = request.form.get(campo)
-            if valor and valor.strip() != '':
-                medida_campos[campo] = valor.strip()
+        # 2) Recopilar todos los bloques prenda[i]
+        indices = set()
+        for key in request.form.keys():
+            if key.startswith('prenda['):
+                parte = key.split(']')[0]
+                idx = parte.replace('prenda[', '')
+                try:
+                    indices.add(int(idx))
+                except:
+                    pass
 
-        obligatorios = []
-        if tipo_prenda in ['blusa_cochala', 'blusa_sucreña']:
-            obligatorios = [
-                'largo_espalda','largo_delantero','cintura','busto','media_cintura',
-                'sisa','escote','largo_manga','puño','cuello','abertura','ancho_espalda','figura'
-            ]
-        elif tipo_prenda == 'pollera_cochala':
-            obligatorios = ['cintura','alforza','paños','wato','corridas','color']
-        elif tipo_prenda == 'pollera_sucreña':
-            obligatorios = ['cintura','cadera','talla','paños','quebrado','wato','color','figura']
-        elif tipo_prenda in ['juste_cochala', 'juste_sucreña']:
-            obligatorios = ['cintura','cadera','pierna','talla']
-        elif tipo_prenda == 'centro_cochala':
-            obligatorios = ['cintura','talla']
-        elif tipo_prenda == 'centro_sucreña':
-            obligatorios = ['cintura','cadera','quebrado','talla']
+        if not indices:
+            errores.append('Debe agregar al menos una prenda al pedido.')
 
-        for campo in obligatorios:
-            if campo not in medida_campos:
-                errores.append(f'Falta el campo de medida: {campo.replace("_", " ").title()}.')
+        # 3) Validar cada bloque de prenda
+        bloques_info = []
+        for i in sorted(indices):
+            tipo_prenda = request.form.get(f'prenda[{i}][tipo_prenda]')
+            medida_id   = request.form.get(f'prenda[{i}][medida_id]')
+            crear_med   = request.form.get(f'prenda[{i}][crear_medidas]')
 
+            if not tipo_prenda:
+                errores.append(f'En la prenda #{i+1} debe seleccionar un tipo de prenda.')
+                continue
+
+            medida_campos = {}
+            for campo in [
+                'largo_espalda','largo_delantero','cintura','busto','media_cintura','sisa',
+                'escote','largo_manga','puño','cuello','abertura','ancho_espalda','figura',
+                'alforza','paños','wato','corridas','color','cadera','talla','quebrado','pierna'
+            ]:
+                valor = request.form.get(f'prenda[{i}][{campo}]')
+                if valor and valor.strip() != '':
+                    medida_campos[campo] = valor.strip()
+
+            obligatorios = []
+            if tipo_prenda in ['blusa_cochala', 'blusa_sucreña']:
+                obligatorios = [
+                    'largo_espalda','largo_delantero','cintura','busto','media_cintura',
+                    'sisa','escote','largo_manga','puño','cuello','abertura','ancho_espalda','figura'
+                ]
+            elif tipo_prenda == 'pollera_cochala':
+                obligatorios = ['cintura','alforza','paños','wato','corridas','color']
+            elif tipo_prenda == 'pollera_sucreña':
+                obligatorios = ['cintura','cadera','talla','paños','quebrado','wato','color','figura']
+            elif tipo_prenda in ['juste_cochala', 'juste_sucreña', 'inagua_cochala', 'inagua_sucreña']:
+                obligatorios = ['cintura','cadera','pierna','talla']
+            elif tipo_prenda == 'centro_cochala':
+                obligatorios = ['cintura','talla']
+            elif tipo_prenda == 'centro_sucreña':
+                obligatorios = ['cintura','cadera','quebrado','talla']
+
+            if crear_med == 'on':
+                for campo in obligatorios:
+                    if campo not in medida_campos:
+                        errores.append(f'Prenda #{i+1}: falta el campo de medida "{campo.replace("_"," ").title()}".')
+            else:
+                if not medida_id:
+                    errores.append(f'Prenda #{i+1}: debe elegir una medida existente o editar para crear nuevas.')
+                else:
+                    if not Medida.query.get(int(medida_id)):
+                        errores.append(f'Prenda #{i+1}: la medida seleccionada no existe.')
+
+            bloques_info.append({
+                'tipo_prenda': tipo_prenda,
+                'medida_id': medida_id,
+                'crear_med': crear_med,
+                'campos': medida_campos
+            })
+
+        # Si hay errores
         if errores:
-            for err in errores:
-                flash(err, 'danger')
-            return render_template('admin/pedido_form.html', form=form)
+            for e in errores:
+                flash(e, 'danger')
+            return render_template('admin/pedido_form.html', form=form, hoy=datetime.today())
 
-        # 1) Actualizar o crear Medida
-        medida_existente = Medida.query.filter_by(
-            cliente_id=int(cliente_id),
-            tipo_prenda=tipo_prenda
-        ).order_by(Medida.fecha_creacion.desc()).first()
+        # 4) Crear medidas y pedidos
+        for bloque in bloques_info:
+            tipo_prenda = bloque['tipo_prenda']
+            medida_id   = bloque['medida_id']
+            crear_med   = bloque['crear_med']
+            campos      = bloque['campos']
 
-        if medida_existente:
-            for campo, valor in medida_campos.items():
-                if campo in ['paños']:
-                    setattr(medida_existente, campo, int(valor))
-                elif campo in ['figura', 'color', 'talla', 'fotos']:
-                    setattr(medida_existente, campo, valor)
-                else:
-                    setattr(medida_existente, campo, float(valor))
-            db.session.commit()
-            medida_id = medida_existente.id
-        else:
-            nueva = Medida(cliente_id=int(cliente_id), tipo_prenda=tipo_prenda)
-            for campo, valor in medida_campos.items():
-                if campo in ['paños']:
-                    setattr(nueva, campo, int(valor))
-                elif campo in ['figura', 'color', 'talla', 'fotos']:
-                    setattr(nueva, campo, valor)
-                else:
-                    setattr(nueva, campo, float(valor))
-            db.session.add(nueva)
-            db.session.flush()
-            medida_id = nueva.id
+            if crear_med == 'off':
+                medida_id_final = int(medida_id)
+            else:
+                nueva = Medida(
+                    cliente_id=int(cliente_id),
+                    tipo_prenda=tipo_prenda
+                )
+                for campo, valor in campos.items():
+                    if campo == 'paños':
+                        setattr(nueva, campo, int(valor))
+                    elif campo in ['figura', 'color', 'talla', 'fotos']:
+                        setattr(nueva, campo, valor)
+                    else:
+                        setattr(nueva, campo, float(valor))
+                db.session.add(nueva)
+                db.session.flush()
+                medida_id_final = nueva.id
 
-        # 2) Generar número_orden único
-        año = datetime.now().year
-        conteo = Pedido.query.filter(
-            func.strftime('%Y', Pedido.fecha_creacion) == str(año)
-        ).count()
-        secuencial   = conteo + 1
-        numero_orden = f"MP-{año}-{secuencial:04d}"
-        while Pedido.query.filter_by(numero_orden=numero_orden).first():
-            secuencial += 1
-            numero_orden = f"MP-{año}-{secuencial:04d}"
+            año = datetime.now().year
+            conteo = Pedido.query.filter(
+                func.strftime('%Y', Pedido.fecha_creacion) == str(año)
+            ).count()
+            secuencial = conteo + 1
+            numero = f"MP-{año}-{secuencial:04d}"
+            while Pedido.query.filter_by(numero_orden=numero).first():
+                secuencial += 1
+                numero = f"MP-{año}-{secuencial:04d}"
 
-        # 3) Guardar Pedido
-        nuevo_pedido = Pedido(
-            numero_orden=numero_orden,
-            cliente_id=int(cliente_id),
-            tipo_prenda=tipo_prenda,
-            medida_id=medida_id,
-            fecha_entrega=fecha_entrega,
-            adelanto=adelanto,
-            total=total,
-            estado='pendiente'
-        )
-        db.session.add(nuevo_pedido)
+            nuevo_pedido = Pedido(
+                numero_orden = numero,
+                cliente_id   = int(cliente_id),
+                tipo_prenda  = tipo_prenda,
+                medida_id    = medida_id_final,
+                fecha_entrega= fecha_entrega_date,
+                adelanto     = float(adelanto),
+                total        = total_val,
+                estado       = 'pendiente'
+            )
+            db.session.add(nuevo_pedido)
+
+        # 5) Guardar todo
         db.session.commit()
-        flash(f'Pedido {numero_orden} creado correctamente.', 'success')
+        flash('Pedido(s) creado(s) exitosamente.', 'success')
         return redirect(url_for('pedidos_list'))
+    
 
-    return render_template('admin/pedido_form.html', form=form)
+    # GET: formulario vacío con protección CSRF
+    return render_template('admin/pedido_form.html', form=form, hoy=datetime.today(), tipos_prenda=tipos_prenda)
+
+
 
 
 @app.route('/admin/pedidos/<int:pedido_id>/editar', methods=['GET', 'POST'])
 @login_required
 @admin_required
 def pedido_editar(pedido_id):
+    """
+    Edición de un pedido individual.
+    (No está contemplada la edición de múltiples ítems; se edita uno por uno.)
+    """
     pedido = Pedido.query.get_or_404(pedido_id)
     form = PedidoForm(
         tipo_prenda=pedido.tipo_prenda,
@@ -677,6 +763,7 @@ def pedido_editar(pedido_id):
         if adelanto is None or adelanto < 0:
             errores.append('El adelanto debe ser numérico y mayor o igual a 0.')
 
+        # Validación de campos de medida (idéntica a nuevo, pero solo un bloque)
         medida_campos = {}
         for campo in [
             'largo_espalda','largo_delantero','cintura','busto','media_cintura','sisa',
@@ -697,7 +784,7 @@ def pedido_editar(pedido_id):
             obligatorios = ['cintura','alforza','paños','wato','corridas','color']
         elif tipo_prenda == 'pollera_sucreña':
             obligatorios = ['cintura','cadera','talla','paños','quebrado','wato','color','figura']
-        elif tipo_prenda in ['juste_cochala', 'juste_sucreña']:
+        elif tipo_prenda in ['juste_cochala', 'juste_sucreña', 'inagua_cochala', 'inagua_sucreña']:
             obligatorios = ['cintura','cadera','pierna','talla']
         elif tipo_prenda == 'centro_cochala':
             obligatorios = ['cintura','talla']
@@ -709,26 +796,30 @@ def pedido_editar(pedido_id):
                 errores.append(f'Falta el campo de medida: {campo.replace("_", " ").title()}.')
 
         if errores:
-            for err in errores:
-                flash(err, 'danger')
+            for e in errores:
+                flash(e, 'danger')
             return render_template('admin/pedido_form.html', form=form, editar=True, pedido=pedido)
 
-        medida_existente = Medida.query.filter_by(cliente_id=int(cliente_id), tipo_prenda=tipo_prenda).             order_by(Medida.fecha_creacion.desc()).first()
+        # Actualizar o crear medida
+        medida_existente = Medida.query.filter_by(
+            cliente_id=int(cliente_id),
+            tipo_prenda=tipo_prenda
+        ).order_by(Medida.fecha_creacion.desc()).first()
 
         if medida_existente:
             for campo, valor in medida_campos.items():
-                if campo in ['paños']:
+                if campo == 'paños':
                     setattr(medida_existente, campo, int(valor))
                 elif campo in ['figura', 'color', 'talla', 'fotos']:
                     setattr(medida_existente, campo, valor)
                 else:
                     setattr(medida_existente, campo, float(valor))
             db.session.commit()
-            medida_id = medida_existente.id
+            medida_id_final = medida_existente.id
         else:
             nueva = Medida(cliente_id=int(cliente_id), tipo_prenda=tipo_prenda)
             for campo, valor in medida_campos.items():
-                if campo in ['paños']:
+                if campo == 'paños':
                     setattr(nueva, campo, int(valor))
                 elif campo in ['figura', 'color', 'talla', 'fotos']:
                     setattr(nueva, campo, valor)
@@ -736,19 +827,22 @@ def pedido_editar(pedido_id):
                     setattr(nueva, campo, float(valor))
             db.session.add(nueva)
             db.session.flush()
-            medida_id = nueva.id
+            medida_id_final = nueva.id
 
-        pedido.cliente_id = int(cliente_id)
-        pedido.tipo_prenda = tipo_prenda
-        pedido.medida_id = medida_id
+        # Actualizar pedido
+        pedido.cliente_id    = int(cliente_id)
+        pedido.tipo_prenda   = tipo_prenda
+        pedido.medida_id     = medida_id_final
         pedido.fecha_entrega = fecha_entrega
-        pedido.adelanto = adelanto
-        pedido.total = total
+        pedido.adelanto      = adelanto
+        pedido.total         = total
         db.session.commit()
+
         flash(f'Pedido {pedido.numero_orden} actualizado.', 'success')
         return redirect(url_for('pedidos_list'))
 
-    return render_template('admin/pedido_form.html', form=form, editar=True, pedido=pedido)
+    return render_template('admin/pedido_form.html', form=form, hoy=datetime.today())
+
 
 @app.route('/admin/pedidos/<int:pedido_id>/eliminar', methods=['POST'])
 @login_required
@@ -761,6 +855,10 @@ def pedido_eliminar(pedido_id):
     flash(f'Pedido {numero} eliminado.', 'success')
     return redirect(url_for('pedidos_list'))
 
+
+# -------------------------------------------------
+# RUTAS PÚBLICAS
+# -------------------------------------------------
 @app.route('/public/rastrear', methods=['GET', 'POST'])
 def rastrear_pedido():
     form = RastrearForm()
@@ -775,6 +873,9 @@ def rastrear_pedido():
     return render_template('public/rastrear_pedido.html', form=form)
 
 
+# -------------------------------------------------
+# MANEJO DE ERRORES
+# -------------------------------------------------
 @app.errorhandler(403)
 def acceso_denegado(e):
     return render_template('403.html'), 403
@@ -782,6 +883,7 @@ def acceso_denegado(e):
 @app.errorhandler(404)
 def pagina_no_encontrada(e):
     return render_template('404.html'), 404
+
 
 if __name__ == '__main__':
     app.run(debug=True)
